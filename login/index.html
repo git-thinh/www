@@ -70,54 +70,76 @@
                 header: 'ĐĂNG NHẬP HỆ THỐNG',
                 url: 'server/post',
                 tabs: [
-                    { id: 'tab1', caption: 'Đăng nhập' },
-                    { id: 'tab2', caption: 'Quên mật khẩu' },
-                    { id: 'tab3', caption: 'Đăng ký' }
+                    { id: 'tab1', text: 'Đăng nhập' },
+                    { id: 'tab2', text: 'Quên mật khẩu' },
+                    { id: 'tab3', text: 'Đăng ký' }
                 ],
                 fields: [
-                    { field: 'username', type: 'text', html: { caption: 'Tài khoản', page: 0 }, required: true },
-                    { field: 'password', type: 'password', html: { caption: 'Mật khẩu', page: 0 }, required: true },
+                    { field: 'username', type: 'text', html: { label: 'Tài khoản', page: 0 }, required: true },
+                    { field: 'password', type: 'password', html: { label: 'Mật khẩu', page: 0 }, required: true },
 
-                    { field: 'address1', type: 'text', html: { caption: 'Address', page: 1, column: 0, group: 'Address Group 1' } },
-                    { field: 'address2', type: 'text', html: { caption: 'Line 2', page: 1, column: 0 } },
+                    { field: 'address1', type: 'text', html: { label: 'Address', page: 1, column: 0, group: 'Address Group 1' } },
+                    { field: 'address2', type: 'text', html: { label: 'Line 2', page: 1, column: 0 } },
 
-                    { field: 'country', type: 'text', html: { caption: 'Country', page: 1, column: 0, group: 'Address Group 3' } },
+                    { field: 'country', type: 'text', html: { label: 'Country', page: 1, column: 0, group: 'Address Group 3' } },
 
-                    { field: 'city', type: 'text', html: { caption: 'City', page: 1, column: 1, group: 'Address Group 2' } },
-                    { field: 'state', type: 'text', html: { caption: 'State', page: 1, column: 1 } },
-                    { field: 'zip', type: 'int', html: { caption: 'Zip', page: 1, column: 1 } },
-                    { field: 'phone', type: 'text', html: { caption: 'Phone', page: 1, column: 1 } },
-                    { field: 'email', type: 'text', html: { caption: 'Email', page: 1, column: 1 } },
+                    { field: 'city', type: 'text', html: { label: 'City', page: 1, column: 1, group: 'Address Group 2' } },
+                    { field: 'state', type: 'text', html: { label: 'State', page: 1, column: 1 } },
+                    { field: 'zip', type: 'int', html: { label: 'Zip', page: 1, column: 1 } },
+                    { field: 'phone', type: 'text', html: { label: 'Phone', page: 1, column: 1 } },
+                    { field: 'email', type: 'text', html: { label: 'Email', page: 1, column: 1 } },
 
-                    { field: 'short_bio', type: 'text', html: { caption: 'Short Bio', page: 2, column: 0 } },
-                    { field: 'talk_name', type: 'text', html: { caption: 'Talk Name', page: 2, column: 0 } },
-                    { field: 'description', type: 'text', html: { caption: 'Talk Description', page: 2, column: 0 } },
-                    { field: 'comments', type: 'textarea', html: { caption: 'Comments:', page: 2, column: 1, attr: 'style="height: 90px"' } },
+                    { field: 'short_bio', type: 'text', html: { label: 'Short Bio', page: 2, column: 0 } },
+                    { field: 'talk_name', type: 'text', html: { label: 'Talk Name', page: 2, column: 0 } },
+                    { field: 'description', type: 'text', html: { label: 'Talk Description', page: 2, column: 0 } },
+                    { field: 'comments', type: 'textarea', html: { label: 'Comments:', page: 2, column: 1, attr: 'style="height: 90px"' } },
 
                 ],
-                    //actions: {
-                    //    reset: function () {
-                    //        this.clear();
-                    //    },
-                    //    save: function () {
-                    //        this.save();
-                    //    }
-                    //},
+                //actions: {
+                //    reset: function () {
+                //        this.clear();
+                //    },
+                //    save: function () {
+                //        this.save();
+                //    }
+                //},
                 toolbar: {
                     items: [
-                        { id: 'bt1', type: 'button', caption: 'Button 1', img: 'icon-folder' },
-                        { id: 'bt2', type: 'button', caption: 'Button 2', img: 'icon-folder' },
+                        { id: 'bt1', type: 'button', text: 'Button 1', img: 'icon-folder' },
+                        { id: 'bt2', type: 'button', text: 'Button 2', img: 'icon-folder' },
                         { id: 'bt3', type: 'spacer' },
-                        { id: 'bt4', type: 'button', caption: 'Reset', img: 'icon-page' },
-                        { id: 'bt5', type: 'button', caption: 'Save', img: 'icon-page' }
+                        { id: 'bt4', type: 'button', text: 'Reset', img: 'icon-page' },
+                        { id: 'bt5', type: 'button', text: 'Save', img: 'icon-page' }
                     ],
                     onClick: function (event) {
                         if (event.target == 'bt4') w2ui.form.clear();
-                        if (event.target == 'bt5') w2ui.form.save();
+                        if (event.target == 'bt5') {
+                            //w2ui.form.save();
+                            console.log(w2ui['form'].validate());
+                        }
                     }
+                },
+                onValidate: function (event) {
+                    console.log('onValidate === ', event);
+
+                    //var date1 = w2utils.isDate(this.record.date1, null, true); // returns JS Date object
+                    //var date2 = w2utils.isDate(this.record.date2, null, true); // returns JS Date object
+                    //if (date1 > date2) {
+                    //    event.errors.push({
+                    //        field: this.get('date1'),
+                    //        error: 'Registration date should be prior to submission date'
+                    //    });
+                    //}
+
+
                 }
             });
         });
+
+
+            //w2ui.form.on('validate', function (event) {
+            //    console.log(event);
+            //});
     </script>
 
 </body>
