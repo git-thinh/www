@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <script src="_libs/jquery.min.3.3.1.js"></script>
+    <link href="_libs/w2ui/w2ui.min.css" rel="stylesheet" />
+    <script src="_libs/w2ui/w2ui.min.js"></script>
+
+    <script type="text/javascript">
+        var ___TOKEN;
+
+        function f_login() {
+            const option = {
+                url: '/login/check',
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrer: 'no-referrer', // no-referrer, *client
+                body: JSON.stringify({ username: 'admin', password: '12345' }) // body data type must match "Content-Type" header
+            };
+
+            return fetch(option.url, option).then(async res => {
+                const j = await res.json();
+                console.log('POST: ', option.url, j);
+                ___TOKEN = j.message;
+                return j;
+            });
+        }
+
+        function f_post_test() {
+            const option = {
+                url: '/api/test',
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'token': ___TOKEN,
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrer: 'no-referrer', // no-referrer, *client
+                body: JSON.stringify({ key1: '0123456789' }) // body data type must match "Content-Type" header
+            };
+
+            return fetch(option.url, option).then(async res => {
+                const j = await res.json();
+                console.log('POST_TEST: ', option.url, j);
+                return j;
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="form" style="width: 750px;"></div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#form').w2form({
+                name: 'form',
+                header: 'ĐĂNG NHẬP HỆ THỐNG',
+                url: 'server/post',
+                tabs: [
+                    { id: 'tab1', caption: 'Đăng nhập' },
+                    { id: 'tab2', caption: 'Quên mật khẩu' },
+                    { id: 'tab3', caption: 'Đăng ký' }
+                ],
+                fields: [
+                    { field: 'username', type: 'text', html: { caption: 'Tài khoản', page: 0 }, required: true },
+                    { field: 'password', type: 'password', html: { caption: 'Mật khẩu', page: 0 }, required: true },
+
+                    { field: 'address1', type: 'text', html: { caption: 'Address', page: 1, column: 0, group: 'Address Group 1' } },
+                    { field: 'address2', type: 'text', html: { caption: 'Line 2', page: 1, column: 0 } },
+
+                    { field: 'country', type: 'text', html: { caption: 'Country', page: 1, column: 0, group: 'Address Group 3' } },
+
+                    { field: 'city', type: 'text', html: { caption: 'City', page: 1, column: 1, group: 'Address Group 2' } },
+                    { field: 'state', type: 'text', html: { caption: 'State', page: 1, column: 1 } },
+                    { field: 'zip', type: 'int', html: { caption: 'Zip', page: 1, column: 1 } },
+                    { field: 'phone', type: 'text', html: { caption: 'Phone', page: 1, column: 1 } },
+                    { field: 'email', type: 'text', html: { caption: 'Email', page: 1, column: 1 } },
+
+                    { field: 'short_bio', type: 'text', html: { caption: 'Short Bio', page: 2, column: 0 } },
+                    { field: 'talk_name', type: 'text', html: { caption: 'Talk Name', page: 2, column: 0 } },
+                    { field: 'description', type: 'text', html: { caption: 'Talk Description', page: 2, column: 0 } },
+                    { field: 'comments', type: 'textarea', html: { caption: 'Comments:', page: 2, column: 1, attr: 'style="height: 90px"' } },
+
+                ],
+                    //actions: {
+                    //    reset: function () {
+                    //        this.clear();
+                    //    },
+                    //    save: function () {
+                    //        this.save();
+                    //    }
+                    //},
+                toolbar: {
+                    items: [
+                        { id: 'bt1', type: 'button', caption: 'Button 1', img: 'icon-folder' },
+                        { id: 'bt2', type: 'button', caption: 'Button 2', img: 'icon-folder' },
+                        { id: 'bt3', type: 'spacer' },
+                        { id: 'bt4', type: 'button', caption: 'Reset', img: 'icon-page' },
+                        { id: 'bt5', type: 'button', caption: 'Save', img: 'icon-page' }
+                    ],
+                    onClick: function (event) {
+                        if (event.target == 'bt4') w2ui.form.clear();
+                        if (event.target == 'bt5') w2ui.form.save();
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
