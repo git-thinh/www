@@ -155,9 +155,6 @@ $.fn.modal = function(parameters) {
         },
 
         destroy: function() {
-          if (observer) {
-            observer.disconnect();
-          }
           module.verbose('Destroying previous modal');
           $module
             .removeData(moduleNamespace)
@@ -487,7 +484,7 @@ $.fn.modal = function(parameters) {
                     if ( settings.allowMultiple ) {
                       $previousModal.addClass(className.front);
                       $module.removeClass(className.front);
-
+      
                       if ( hideOthersToo ) {
                         $allModals.find(selector.dimmer).removeClass('active');
                       }

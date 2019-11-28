@@ -13,7 +13,7 @@
              Page
 *******************************/
 
-@import url('https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&subset=latin');
 html,
 body {
   height: 100%;
@@ -166,7 +166,6 @@ body ::-webkit-scrollbar-thumb {
   cursor: pointer;
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.25);
-  -webkit-transition: color 0.2s ease;
   transition: color 0.2s ease;
 }
 body ::-webkit-scrollbar-thumb:window-inactive {

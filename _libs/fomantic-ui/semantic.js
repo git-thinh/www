@@ -1,5 +1,5 @@
  /*
- * # Fomantic UI - 2.7.8
+ * # Fomantic UI - 2.7.6
  * https://github.com/fomantic/Fomantic-UI
  * http://fomantic-ui.com/
  *
@@ -696,8 +696,8 @@ $.fn.form = function(parameters) {
               $calendar    = $field.closest(selector.uiCalendar),
               defaultValue = $field.data(metadata.defaultValue) || '',
               isCheckbox   = $element.is(selector.uiCheckbox),
-              isDropdown   = $element.is(selector.uiDropdown)  && module.can.useElement('dropdown'),
-              isCalendar   = ($calendar.length > 0  && module.can.useElement('calendar')),
+              isDropdown   = $element.is(selector.uiDropdown),
+              isCalendar   = ($calendar.length > 0),
               isErrored    = $fieldGroup.hasClass(className.error)
             ;
             if(isErrored) {
@@ -732,8 +732,8 @@ $.fn.form = function(parameters) {
               $prompt      = $fieldGroup.find(selector.prompt),
               defaultValue = $field.data(metadata.defaultValue),
               isCheckbox   = $element.is(selector.uiCheckbox),
-              isDropdown   = $element.is(selector.uiDropdown)  && module.can.useElement('dropdown'),
-              isCalendar   = ($calendar.length > 0  && module.can.useElement('calendar')),
+              isDropdown   = $element.is(selector.uiDropdown),
+              isCalendar   = ($calendar.length > 0),
               isErrored    = $fieldGroup.hasClass(className.error)
             ;
             if(defaultValue === undefined) {
@@ -1182,7 +1182,7 @@ $.fn.form = function(parameters) {
                 isCheckbox   = $field.is(selector.checkbox),
                 isRadio      = $field.is(selector.radio),
                 isMultiple   = (name.indexOf('[]') !== -1),
-                isCalendar   = ($calendar.length > 0  && module.can.useElement('calendar')),
+                isCalendar   = ($calendar.length > 0),
                 isChecked    = (isCheckbox)
                   ? $field.is(':checked')
                   : false
@@ -1237,23 +1237,23 @@ $.fn.form = function(parameters) {
                           case 'date':
                           values[name] = settings.formatter.date(date);
                           break;
-
+                          
                           case 'datetime':
                           values[name] = settings.formatter.datetime(date);
                           break;
-
+                          
                           case 'time':
                           values[name] = settings.formatter.time(date);
                           break;
-
+                          
                           case 'month':
                           values[name] = settings.formatter.month(date);
                           break;
-
+                          
                           case 'year':
                           values[name] = settings.formatter.year(date);
                           break;
-
+  
                           default:
                           module.debug('Wrong calendar mode', $calendar, type);
                           values[name] = '';
@@ -1297,16 +1297,6 @@ $.fn.form = function(parameters) {
             return false;
           }
 
-        },
-
-        can: {
-            useElement: function(element){
-               if ($.fn[element] !== undefined) {
-                   return true;
-               }
-               module.error(error.noElement.replace('{element}',element));
-               return false;
-            }
         },
 
         escape: {
@@ -1374,7 +1364,7 @@ $.fn.form = function(parameters) {
             }
             if(settings.inline) {
               if(!promptExists) {
-                $prompt = settings.templates.prompt(errors, className.label);
+                $prompt = settings.templates.prompt(errors);
                 $prompt
                   .appendTo($fieldGroup)
                 ;
@@ -1383,7 +1373,7 @@ $.fn.form = function(parameters) {
                 .html(errors[0])
               ;
               if(!promptExists) {
-                if(settings.transition && module.can.useElement('transition') && $module.transition('is supported')) {
+                if(settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
                   module.verbose('Displaying error with css transition', settings.transition);
                   $prompt.transition(settings.transition + ' in', settings.duration);
                 }
@@ -1465,7 +1455,7 @@ $.fn.form = function(parameters) {
             ;
             if(settings.inline && $prompt.is(':visible')) {
               module.verbose('Removing prompt for field', identifier);
-              if(settings.transition  && module.can.useElement('transition') && $module.transition('is supported')) {
+              if(settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
                 $prompt.transition(settings.transition + ' out', settings.duration, function() {
                   $prompt.remove();
                 });
@@ -1494,7 +1484,7 @@ $.fn.form = function(parameters) {
                 $el        = $(el),
                 $parent    = $el.parent(),
                 isCheckbox = ($el.filter(selector.checkbox).length > 0),
-                isDropdown = $parent.is(selector.uiDropdown) && module.can.useElement('dropdown'),
+                isDropdown = $parent.is(selector.uiDropdown),
                 value      = (isCheckbox)
                   ? $el.is(':checked')
                   : $el.val()
@@ -1527,12 +1517,10 @@ $.fn.form = function(parameters) {
               var
                 $field      = module.get.field(key),
                 $element    = $field.parent(),
-                $calendar   = $field.closest(selector.uiCalendar),
                 isMultiple  = Array.isArray(value),
-                isCheckbox  = $element.is(selector.uiCheckbox)  && module.can.useElement('checkbox'),
-                isDropdown  = $element.is(selector.uiDropdown) && module.can.useElement('dropdown'),
+                isCheckbox  = $element.is(selector.uiCheckbox),
+                isDropdown  = $element.is(selector.uiDropdown),
                 isRadio     = ($field.is(selector.radio) && isCheckbox),
-                isCalendar  = ($calendar.length > 0  && module.can.useElement('calendar')),
                 fieldExists = ($field.length > 0),
                 $multipleField
               ;
@@ -1567,9 +1555,6 @@ $.fn.form = function(parameters) {
                 else if(isDropdown) {
                   module.verbose('Setting dropdown value', value, $element);
                   $element.dropdown('set selected', value);
-                }
-                else if (isCalendar) {
-                  $calendar.calendar('set date',value);
                 }
                 else {
                   module.verbose('Setting field value', value, $field);
@@ -2025,7 +2010,7 @@ $.fn.form.settings = {
 
   className : {
     error   : 'error',
-    label   : 'ui basic red pointing prompt label',
+    label   : 'ui prompt label',
     pressed : 'down',
     success : 'success'
   },
@@ -2034,8 +2019,7 @@ $.fn.form.settings = {
     identifier : 'You must specify a string identifier for each field',
     method     : 'The method you called is not defined.',
     noRule     : 'There is no rule matching the one you specified',
-    oldSyntax  : 'Starting in 2.0 forms now only take a single settings object. Validation settings converted to new syntax automatically.',
-    noElement  : 'This module requires ui {element}'
+    oldSyntax  : 'Starting in 2.0 forms now only take a single settings object. Validation settings converted to new syntax automatically.'
   },
 
   templates: {
@@ -2053,9 +2037,9 @@ $.fn.form.settings = {
     },
 
     // template that produces label
-    prompt: function(errors, labelClasses) {
+    prompt: function(errors) {
       return $('<div/>')
-        .addClass(labelClasses)
+        .addClass('ui basic red pointing prompt label')
         .html(errors[0])
       ;
     }
@@ -2660,10 +2644,7 @@ $.fn.accordion = function(parameters) {
                     debug            : settings.debug,
                     verbose          : settings.verbose,
                     duration         : settings.duration,
-                    skipInlineHidden : true,
-                    onComplete: function() {
-                      $activeContent.children().removeClass(className.transition);
-                    }
+                    skipInlineHidden : true
                   })
               ;
             }
@@ -3065,8 +3046,7 @@ $.fn.accordion.settings = {
 
   className   : {
     active    : 'active',
-    animating : 'animating',
-    transition: 'transition'
+    animating : 'animating'
   },
 
   selector    : {
@@ -4897,7 +4877,7 @@ $.fn.checkbox = function(parameters) {
               $input.blur();
               shortcutPressed = true;
             }
-            else if(!event.ctrlKey && ( key == keyCode.space || (key == keyCode.enter && settings.enableEnterKey)) ) {
+            else if(!event.ctrlKey && ( key == keyCode.space || key == keyCode.enter) ) {
               module.verbose('Enter/space key pressed, toggling checkbox');
               module.toggle();
               shortcutPressed = true;
@@ -5482,7 +5462,6 @@ $.fn.checkbox.settings = {
   // delegated event context
   uncheckable         : 'auto',
   fireOnInit          : false,
-  enableEnterKey      : true,
 
   onChange            : function(){},
 
@@ -6369,7 +6348,6 @@ $.fn.dropdown = function(parameters) {
         element         = this,
         instance        = $module.data(moduleNamespace),
 
-        selectActionActive,
         initialLoad,
         pageLostFocus,
         willRefocus,
@@ -6666,7 +6644,7 @@ $.fn.dropdown = function(parameters) {
                 .attr('class', $input.attr('class') )
                 .addClass(className.selection)
                 .addClass(className.dropdown)
-                .html( templates.dropdown(selectValues, fields, settings.preserveHTML, settings.className) )
+                .html( templates.dropdown(selectValues,settings.preserveHTML, settings.className) )
                 .insertBefore($input)
               ;
               if($input.hasClass(className.multiple) && $input.prop('multiple') === false) {
@@ -7485,9 +7463,7 @@ $.fn.dropdown = function(parameters) {
             },
             hide: function(event) {
               if(module.determine.eventInModule(event, module.hide)){
-                if(element.id && $(event.target).attr('for') === element.id){
                   event.preventDefault();
-                }
               }
             }
           },
@@ -7580,7 +7556,7 @@ $.fn.dropdown = function(parameters) {
                 isBubbledEvent = ($subMenu.find($target).length > 0)
               ;
               // prevents IE11 bug where menu receives focus even though `tabindex=-1`
-              if (document.activeElement.tagName.toLowerCase() !== 'input') {
+              if (!module.has.search() || !document.activeElement.isEqualNode($search[0])) {
                 $(document.activeElement).blur();
               }
               if(!isBubbledEvent && (!hasSubMenu || settings.allowCategorySelection)) {
@@ -7925,7 +7901,6 @@ $.fn.dropdown = function(parameters) {
 
         determine: {
           selectAction: function(text, value) {
-            selectActionActive = true;
             module.verbose('Determining action', settings.action);
             if( $.isFunction( module.action[settings.action] ) ) {
               module.verbose('Triggering preset action', settings.action, text, value);
@@ -7938,7 +7913,6 @@ $.fn.dropdown = function(parameters) {
             else {
               module.error(error.action, settings.action);
             }
-            selectActionActive = false;
           },
           eventInModule: function(event, callback) {
             var
@@ -8149,7 +8123,7 @@ $.fn.dropdown = function(parameters) {
             }
             return ( !module.has.selectInput() && module.is.multiple() )
               ? (typeof value == 'string') // delimited string
-                ? module.escape.htmlEntities(value).split(settings.delimiter)
+                ? value.split(settings.delimiter)
                 : ''
               : value
             ;
@@ -8226,8 +8200,7 @@ $.fn.dropdown = function(parameters) {
           },
           selectValues: function() {
             var
-              select = {},
-              oldGroup = []
+              select = {}
             ;
             select.values = [];
             $module
@@ -8239,21 +8212,12 @@ $.fn.dropdown = function(parameters) {
                     disabled = $option.attr('disabled'),
                     value    = ( $option.attr('value') !== undefined )
                       ? $option.attr('value')
-                      : name,
-                    group = $option.parent('optgroup')
+                      : name
                   ;
                   if(settings.placeholder === 'auto' && value === '') {
                     select.placeholder = name;
                   }
                   else {
-                    if(group.length !== oldGroup.length || group[0] !== oldGroup[0]) {
-                      select.values.push({
-                        type: 'header',
-                        divider: settings.headerDivider,
-                        name: group.attr('label') || ''
-                      });
-                      oldGroup = group;
-                    }
                     select.values.push({
                       name     : name,
                       value    : value,
@@ -8323,11 +8287,11 @@ $.fn.dropdown = function(parameters) {
                 ? module.get.values()
                 : module.get.text()
             ;
-            isMultiple = (module.is.multiple() && Array.isArray(value));
             shouldSearch = (isMultiple)
               ? (value.length > 0)
               : (value !== undefined && value !== null)
             ;
+            isMultiple = (module.is.multiple() && Array.isArray(value));
             strict     = (value === '' || value === false  || value === true)
               ? true
               : strict || false
@@ -8471,8 +8435,7 @@ $.fn.dropdown = function(parameters) {
             else {
               module.set.selected();
             }
-            var value = module.get.value();
-            if(value && value !== '' && !(Array.isArray(value) && value.length === 0)) {
+            if(module.get.item()) {
               $input.removeClass(className.noselection);
             } else {
               $input.addClass(className.noselection);
@@ -8722,9 +8685,6 @@ $.fn.dropdown = function(parameters) {
               ? forceScroll
               : false
             ;
-            if(module.get.activeItem().length === 0){
-              forceScroll = false;
-            }
             if($item && $menu.length > 0 && hasActive) {
               itemOffset = $item.position().top;
 
@@ -8974,7 +8934,7 @@ $.fn.dropdown = function(parameters) {
                       module.set.activeItem($selected);
                     }
                   }
-                  else if(!isFiltered && (settings.useLabels || selectActionActive)) {
+                  else if(!isFiltered) {
                     module.debug('Selected active value, removing label');
                     module.remove.selected(selectedValue);
                   }
@@ -10183,8 +10143,6 @@ $.fn.dropdown.settings = {
 
   glyphWidth             : 1.037,      // widest glyph width in em (W is 1.037 em) used to calculate multiselect input width
 
-  headerDivider          : true,       // whether option headers should have an additional divider line underneath when converted from <select> <optgroup>
-
   // label settings on multi-select
   label: {
     transition : 'scale',
@@ -10257,13 +10215,7 @@ $.fn.dropdown.settings = {
     name         : 'name',     // displayed dropdown text
     value        : 'value',    // actual dropdown value
     text         : 'text',     // displayed text when selected
-    type         : 'type',     // type of dropdown element
-    image        : 'image',    // optional image path
-    imageClass   : 'imageClass', // optional individual class for image
-    icon         : 'icon',     // optional icon name
-    iconClass    : 'iconClass', // optional individual class for icon (for example to use flag instead)
-    class        : 'class',    // optional individual class for item/header
-    divider      : 'divider'   // optional divider append for group headers
+    type         : 'type'      // type of dropdown element
   },
 
   keys : {
@@ -10310,8 +10262,6 @@ $.fn.dropdown.settings = {
     dropdown    : 'ui dropdown',
     filtered    : 'filtered',
     hidden      : 'hidden transition',
-    icon        : 'icon',
-    image       : 'image',
     item        : 'item',
     label       : 'ui label',
     loading     : 'loading',
@@ -10328,19 +10278,13 @@ $.fn.dropdown.settings = {
     visible     : 'visible',
     clearable   : 'clearable',
     noselection : 'noselection',
-    delete      : 'delete',
-    header      : 'header',
-    divider     : 'divider',
-    groupIcon   : ''
+    delete      : 'delete'
   }
 
 };
 
 /* Templates */
 $.fn.dropdown.settings.templates = {
-  deQuote: function(string) {
-      return String(string).replace(/"/g,"");
-  },
   escape: function(string, preserveHTML) {
     if (preserveHTML){
       return string;
@@ -10366,9 +10310,10 @@ $.fn.dropdown.settings.templates = {
     return string;
   },
   // generates dropdown from select values
-  dropdown: function(select, fields, preserveHTML, className) {
+  dropdown: function(select, preserveHTML, className) {
     var
       placeholder = select.placeholder || false,
+      values      = select.values || [],
       html        = '',
       escape = $.fn.dropdown.settings.templates.escape
     ;
@@ -10380,7 +10325,9 @@ $.fn.dropdown.settings.templates = {
       html += '<div class="text"></div>';
     }
     html += '<div class="'+className.menu+'">';
-    html += $.fn.dropdown.settings.templates.menu(select, fields, preserveHTML,className);
+    $.each(values, function(index, option) {
+      html += '<div class="'+(option.disabled ? className.disabled+' ':'')+className.item+'" data-value="' + String(option.value).replace(/"/g,"") + '">' + escape(option.name,preserveHTML) + '</div>';
+    });
     html += '</div>';
     return html;
   },
@@ -10390,8 +10337,7 @@ $.fn.dropdown.settings.templates = {
     var
       values = response[fields.values] || [],
       html   = '',
-      escape = $.fn.dropdown.settings.templates.escape,
-      deQuote = $.fn.dropdown.settings.templates.deQuote
+      escape = $.fn.dropdown.settings.templates.escape
     ;
     $.each(values, function(index, option) {
       var
@@ -10403,36 +10349,19 @@ $.fn.dropdown.settings.templates = {
       if( itemType === 'item' ) {
         var
           maybeText = (option[fields.text])
-            ? ' data-text="' + deQuote(option[fields.text]) + '"'
+            ? ' data-text="' + String(option[fields.text]).replace(/"/g,"") + '"'
             : '',
           maybeDisabled = (option[fields.disabled])
             ? className.disabled+' '
             : ''
         ;
-        html += '<div class="'+ maybeDisabled + (option[fields.class] ? deQuote(option[fields.class]) : className.item)+'" data-value="' + deQuote(option[fields.value]) + '"' + maybeText + '>';
-        if(option[fields.image]) {
-          html += '<img class="'+(option[fields.imageClass] ? deQuote(option[fields.imageClass]) : className.image)+'" src="' + deQuote(option[fields.image]) + '">';
-        }
-        if(option[fields.icon]) {
-          html += '<i class="'+deQuote(option[fields.icon])+' '+(option[fields.iconClass] ? deQuote(option[fields.iconClass]) : className.icon)+'"></i>';
-        }
+        html += '<div class="'+ maybeDisabled + className.item+'" data-value="' + String(option[fields.value]).replace(/"/g,"") + '"' + maybeText + '>';
         html +=   escape(option[fields.name],preserveHTML);
         html += '</div>';
       } else if (itemType === 'header') {
-        var groupName = escape(option[fields.name],preserveHTML),
-            groupIcon = option[fields.icon] ? deQuote(option[fields.icon]) : className.groupIcon
-        ;
-        if(groupName !== '' || groupIcon !== '') {
-          html += '<div class="' + (option[fields.class] ? deQuote(option[fields.class]) : className.header) + '">';
-          if (groupIcon !== '') {
-            html += '<i class="' + groupIcon + ' ' + (option[fields.iconClass] ? deQuote(option[fields.iconClass]) : className.icon) + '"></i>';
-          }
-          html += groupName;
-          html += '</div>';
-        }
-        if(option[fields.divider]){
-          html += '<div class="'+className.divider+'"></div>';
-        }
+        html += '<div class="header">';
+        html +=   escape(option[fields.name],preserveHTML);
+        html += '</div>';
       }
     });
     return html;
@@ -11327,9 +11256,6 @@ $.fn.modal = function(parameters) {
         },
 
         destroy: function() {
-          if (observer) {
-            observer.disconnect();
-          }
           module.verbose('Destroying previous modal');
           $module
             .removeData(moduleNamespace)
@@ -11659,7 +11585,7 @@ $.fn.modal = function(parameters) {
                     if ( settings.allowMultiple ) {
                       $previousModal.addClass(className.front);
                       $module.removeClass(className.front);
-
+      
                       if ( hideOthersToo ) {
                         $allModals.find(selector.dimmer).removeClass('active');
                       }
@@ -13709,7 +13635,7 @@ $.fn.popup = function(parameters) {
             // see if any boundaries are surpassed with this tentative position
             distanceFromBoundary = module.get.distanceFromBoundary(popupOffset, calculations);
 
-            if(!settings.forcePosition && module.is.offstage(distanceFromBoundary, position) ) {
+            if( module.is.offstage(distanceFromBoundary, position) ) {
               module.debug('Position is outside viewport', position);
               if(searchDepth < settings.maxSearchDepth) {
                 searchDepth++;
@@ -14179,9 +14105,6 @@ $.fn.popup.settings = {
 
   // default position relative to element
   position       : 'top left',
-
-  // if given position should be used regardless if popup fits
-  forcePosition  : false,
 
   // name of variation to use
   variation      : '',
@@ -14813,7 +14736,7 @@ $.fn.progress = function(parameters) {
                   width: value + '%'
                 });
               }
-              return parseFloat(value);
+              return parseInt(value, 10);
             });
             values.forEach(function(_, index) {
               var $bar = $($bars[index]);
@@ -14868,15 +14791,15 @@ $.fn.progress = function(parameters) {
                   : undefined;
 
               // round display percentage
-              var roundedPercents = percents.map(function (percent) {
+              percents = percents.map(function (percent) {
                 return (autoPrecision > 0)
                   ? Math.round(percent * (10 * autoPrecision)) / (10 * autoPrecision)
                   : Math.round(percent)
                   ;
               });
-              module.percent = roundedPercents;
+              module.percent = percents;
               if (!hasTotal) {
-                module.value = roundedPercents.map(function (percent) {
+                module.value = percents.map(function (percent) {
                   return (autoPrecision > 0)
                     ? Math.round((percent / 100) * module.total * (10 * autoPrecision)) / (10 * autoPrecision)
                     : Math.round((percent / 100) * module.total * 10) / 10
@@ -15406,7 +15329,6 @@ $.fn.slider = function(parameters) {
 
   var
     $allModules    = $(this),
-    $window        = $(window),
 
     moduleSelector = $allModules.selector || '',
 
@@ -15470,7 +15392,6 @@ $.fn.slider = function(parameters) {
         offset,
         precision,
         isTouch,
-        gapRatio = 1,
 
         module
       ;
@@ -15595,11 +15516,7 @@ $.fn.slider = function(parameters) {
               for(var i = 0, len = module.get.numLabels(); i <= len; i++) {
                 var
                   labelText = module.get.label(i),
-                  $label = (labelText !== "") 
-                    ? !(i % module.get.gapRatio())
-                      ? $('<li class="label">' + labelText + '</li>') 
-                      : $('<li class="halftick label"></li>')
-                    : null,
+                  $label = (labelText !== "") ? $('<li class="label">' + labelText + '</li>') : null,
                   ratio  = i / len
                 ;
                 if($label) {
@@ -15618,9 +15535,6 @@ $.fn.slider = function(parameters) {
             module.bind.mouseEvents();
             if(module.is.touch()) {
               module.bind.touchEvents();
-            }
-            if (settings.autoAdjustLabels) {
-              module.bind.windowEvents();
             }
           },
           keyboardEvents: function() {
@@ -15665,9 +15579,6 @@ $.fn.slider = function(parameters) {
               $(document).on('mousemove' + eventNamespace, module.event.move);
               $(document).on('mouseup' + eventNamespace, module.event.up);
             }
-          },
-          windowEvents: function() {
-            $window.on('resize' + eventNamespace, module.event.resize);
           }
         },
 
@@ -15682,7 +15593,6 @@ $.fn.slider = function(parameters) {
             $module.off('keydown' + eventNamespace);
             $module.off('focusout' + eventNamespace);
             $(document).off('keydown' + eventNamespace + documentEventID, module.event.activateFocus);
-            $window.off('resize' + eventNamespace);
           },
           slidingEvents: function() {
             if(module.is.touch()) {
@@ -15770,13 +15680,6 @@ $.fn.slider = function(parameters) {
               $module.focus();
             }
           },
-          resize: function(_event) {
-            // To avoid a useless performance cost, we only call the label refresh when its necessary
-            if (gapRatio != module.get.gapRatio()) {
-              module.setup.labels();
-              gapRatio = module.get.gapRatio();
-            }
-          }
         },
 
         resync: function() {
@@ -15990,29 +15893,6 @@ $.fn.slider = function(parameters) {
               case 'first':
               default:
                 return position;
-            }
-          },
-          gapRatio: function() {
-            var gapRatio = 1;
-            
-            if( settings.autoAdjustLabels ) {
-              var 
-                numLabels = module.get.numLabels(),
-                gapCounter = 1
-              ;
-
-              // While the distance between two labels is too short,
-              // we divide the number of labels at each iteration
-              // and apply only if the modulo of the operation is an odd number.
-              while ((module.get.trackLength() / numLabels) * gapCounter < settings.labelDistance) {
-                if( !(numLabels % gapCounter) ) {
-                  gapRatio = gapCounter;
-                }
-                gapCounter += 1;
-              }
-              return gapRatio;
-            } else {
-              return 1;
             }
           }
         },
@@ -16595,16 +16475,14 @@ $.fn.slider.settings = {
     secondThumbVal  : 'secondThumbVal'
   },
 
-  min              : 0,
-  max              : 20,
-  step             : 1,
-  start            : 0,
-  end              : 20,
-  labelType        : 'number',
-  showLabelTicks   : false,
-  smooth           : false,
-  autoAdjustLabels : true,
-  labelDistance    : 100,
+  min            : 0,
+  max            : 20,
+  step           : 1,
+  start          : 0,
+  end            : 20,
+  labelType      : 'number',
+  showLabelTicks : false,
+  smooth         : false,
 
   //the decimal place to round to if step is undefined
   decimalPlaces  : 2,
@@ -17611,6 +17489,7 @@ $.fn.search = function(parameters) {
           },
           result: function(value, results) {
             var
+              lookupFields = ['title', 'id'],
               result       = false
             ;
             value = (value !== undefined)
@@ -17625,7 +17504,7 @@ $.fn.search = function(parameters) {
               module.debug('Finding result that matches', value);
               $.each(results, function(index, category) {
                 if(Array.isArray(category.results)) {
-                  result = module.search.object(value, category.results)[0];
+                  result = module.search.object(value, category.results, lookupFields)[0];
                   // don't continue searching if a result is found
                   if(result) {
                     return false;
@@ -17635,7 +17514,7 @@ $.fn.search = function(parameters) {
             }
             else {
               module.debug('Finding result in results object', value);
-              result = module.search.object(value, results)[0];
+              result = module.search.object(value, results, lookupFields)[0];
             }
             return result || false;
           },
@@ -17807,15 +17686,10 @@ $.fn.search = function(parameters) {
             $.each(searchFields, function(index, field) {
               $.each(source, function(label, content) {
                 var
-                  fieldExists = (typeof content[field] == 'string') || (typeof content[field] == 'number')
+                  fieldExists = (typeof content[field] == 'string')
                 ;
                 if(fieldExists) {
-                  var text;
-                  if (typeof content[field] === 'string'){  
-                      text = module.remove.diacritics(content[field]);
-                  } else {
-                      text = content[field].toString(); 
-                  }
+                  var text = module.remove.diacritics(content[field]);
                   if( text.search(matchRegExp) !== -1) {
                     // content starts with value (first in results)
                     addResult(results, content);
@@ -18426,7 +18300,6 @@ $.fn.search.settings = {
 
   // fields to search
   searchFields   : [
-    'id',
     'title',
     'description'
   ],
@@ -21658,11 +21531,6 @@ $.fn.tab = function(parameters) {
             initializedHistory = true;
           }
 
-          if(module.determine.activeTab() == null) {
-            module.debug('No active tab detected, setting first tab active', module.get.initialPath());
-            module.changeTab(module.get.initialPath());
-          };
-
           module.instantiate();
         },
 
@@ -22239,29 +22107,6 @@ $.fn.tab = function(parameters) {
           },
           tab: function() {
             return activeTabPath;
-          }
-        },
-
-        determine: {
-          activeTab: function() {
-            var activeTab = null;
-
-            $tabs.each(function(_index, tab) {
-              var $tab = $(tab);
-
-              if( $tab.hasClass(className.active) ) {
-                var
-                  tabPath = $(this).data(metadata.tab),
-                  $anchor = $allModules.filter('[data-' + metadata.tab + '="' + module.escape.string(tabPath) + '"]')
-                ;
-
-                if( $anchor.hasClass(className.active) ) {
-                  activeTab = tabPath;
-                }
-              }
-            });
-
-            return activeTab;
           }
         },
 

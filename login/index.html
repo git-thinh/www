@@ -2,145 +2,132 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
     <title></title>
 
-    <script src="_libs/jquery.min.3.3.1.js"></script>
-    <link href="_libs/w2ui/w2ui.min.css" rel="stylesheet" />
-    <script src="_libs/w2ui/w2ui.min.js"></script>
+    <script src="_libs/jquery.js"></script>
 
-    <script type="text/javascript">
-        var ___TOKEN;
+    <link href="_libs/fomantic-ui/semantic.min.css" rel="stylesheet" />
+    <script src="_libs/fomantic-ui/semantic.min.js"></script>
 
-        function f_login() {
-            const option = {
-                url: '/login/check',
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrer: 'no-referrer', // no-referrer, *client
-                body: JSON.stringify({ username: 'admin', password: '12345' }) // body data type must match "Content-Type" header
-            };
+    <script src="_libs/vuejs/vue.min.js"></script>
+    <script src="_libs/vuejs/vue-router.min.js"></script>
 
-            return fetch(option.url, option).then(async res => {
-                const j = await res.json();
-                console.log('POST: ', option.url, j);
-                ___TOKEN = j.message;
-                return j;
-            });
+    <link href="_libs/datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="_libs/datatables/jquery.dataTables.min.js"></script>
+    <script src="_libs/datatables/dataTables.fixedColumns.min.js"></script>
+
+    <style type="text/css">
+        body {
+            background-color: #f5f5f5;
         }
 
-        function f_post_test() {
-            const option = {
-                url: '/api/test',
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                headers: {
-                    'token': ___TOKEN,
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrer: 'no-referrer', // no-referrer, *client
-                body: JSON.stringify({ key1: '0123456789' }) // body data type must match "Content-Type" header
-            };
-
-            return fetch(option.url, option).then(async res => {
-                const j = await res.json();
-                console.log('POST_TEST: ', option.url, j);
-                return j;
-            });
+        #ui-app {
+            height: 100vh;
         }
-    </script>
+
+            #ui-app .ui-page {
+                max-width: 450px;
+                background-color: #fff;
+            }
+
+        .field {
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-    <div id="form" style="width: 750px;"></div>
-
+    <div id="ui-app" class="ui middle aligned center aligned grid">
+        <div class="column ui-page">
+            <div class="ui form">
+                <div class="ui error message"></div>
+                <div class="ui stacked segment">
+                    <div v-for="(field,index) in objForm.arr_fields"
+                         v-if="field.str_kit === 'text'" :class="['field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
+                        <label>{{field.str_caption}}</label>
+                        <input type="text" :name="field.str_name" :placeholder="field.str_placeholder">
+                    </div>
+                    <div v-else-if="field.str_kit === 'checkbox'" :class="['field ___v-form-field-' + field.str_name, field.bit_required ? 'required':'', field.bit_inline ? 'inline' : '']">
+                        <div class="ui checkbox">
+                            <input type="checkbox" :name="field.str_name" tabindex="0" class="hidden">
+                            <label>{{field.str_caption}}</label>
+                        </div>
+                    </div>
+                    <div v-else class="required inline field">
+                        Not A/B/C
+                    </div>
+                </div>
+                <div class="ui primary submit button">Submit</div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript">
-        $(function () {
-            $('#form').w2form({
-                name: 'form',
-                header: 'ĐĂNG NHẬP HỆ THỐNG',
-                url: 'server/post',
-                tabs: [
-                    { id: 'tab1', text: 'Đăng nhập' },
-                    { id: 'tab2', text: 'Quên mật khẩu' },
-                    { id: 'tab3', text: 'Đăng ký' }
-                ],
-                fields: [
-                    { field: 'username', type: 'text', html: { label: 'Tài khoản', page: 0 }, required: true },
-                    { field: 'password', type: 'password', html: { label: 'Mật khẩu', page: 0 }, required: true },
-
-                    { field: 'address1', type: 'text', html: { label: 'Address', page: 1, column: 0, group: 'Address Group 1' } },
-                    { field: 'address2', type: 'text', html: { label: 'Line 2', page: 1, column: 0 } },
-
-                    { field: 'country', type: 'text', html: { label: 'Country', page: 1, column: 0, group: 'Address Group 3' } },
-
-                    { field: 'city', type: 'text', html: { label: 'City', page: 1, column: 1, group: 'Address Group 2' } },
-                    { field: 'state', type: 'text', html: { label: 'State', page: 1, column: 1 } },
-                    { field: 'zip', type: 'int', html: { label: 'Zip', page: 1, column: 1 } },
-                    { field: 'phone', type: 'text', html: { label: 'Phone', page: 1, column: 1 } },
-                    { field: 'email', type: 'text', html: { label: 'Email', page: 1, column: 1 } },
-
-                    { field: 'short_bio', type: 'text', html: { label: 'Short Bio', page: 2, column: 0 } },
-                    { field: 'talk_name', type: 'text', html: { label: 'Talk Name', page: 2, column: 0 } },
-                    { field: 'description', type: 'text', html: { label: 'Talk Description', page: 2, column: 0 } },
-                    { field: 'comments', type: 'textarea', html: { label: 'Comments:', page: 2, column: 1, attr: 'style="height: 90px"' } },
-
-                ],
-                //actions: {
-                //    reset: function () {
-                //        this.clear();
-                //    },
-                //    save: function () {
-                //        this.save();
-                //    }
-                //},
-                toolbar: {
-                    items: [
-                        { id: 'bt1', type: 'button', text: 'Button 1', img: 'icon-folder' },
-                        { id: 'bt2', type: 'button', text: 'Button 2', img: 'icon-folder' },
-                        { id: 'bt3', type: 'spacer' },
-                        { id: 'bt4', type: 'button', text: 'Reset', img: 'icon-page' },
-                        { id: 'bt5', type: 'button', text: 'Save', img: 'icon-page' }
-                    ],
-                    onClick: function (event) {
-                        if (event.target == 'bt4') w2ui.form.clear();
-                        if (event.target == 'bt5') {
-                            //w2ui.form.save();
-                            console.log(w2ui['form'].validate());
-                        }
+        new Vue({
+            el: '#ui-app',
+            data: function () {
+                return {
+                    objForm: {
+                        str_title: '',
+                        arr_fields: [
+                            {
+                                str_name: 'field-1',
+                                str_caption: 'Last name',
+                                str_placeholder: 'Full name',
+                                str_kit: 'text',
+                                bit_required: true,
+                                bit_inline: false,
+                                arr_rules: [
+                                    {
+                                        type: 'empty',
+                                        prompt: 'Please enter your name'
+                                    }
+                                ]
+                            },
+                            {
+                                str_name: 'field-2',
+                                str_caption: 'I agree to the terms and conditions',
+                                str_kit: 'checkbox',
+                                bit_required: false,
+                                bit_inline: true
+                            }
+                        ]
                     }
-                },
-                onValidate: function (event) {
-                    console.log('onValidate === ', event);
+                };
+            },
+            created: function () {
+                var _self = this;
+                console.log('APP.created: ');
+            },
+            mounted: function () {
+                var _self = this;
+                console.log('APP.mounted: ');
+                Vue.nextTick(_self.___ready);
+            },
+            methods: {
+                ___ready: function () {
+                    var _self = this;
+                    console.log('APP.ready: data = ', _self.objForm.arr_fields);
 
-                    //var date1 = w2utils.isDate(this.record.date1, null, true); // returns JS Date object
-                    //var date2 = w2utils.isDate(this.record.date2, null, true); // returns JS Date object
-                    //if (date1 > date2) {
-                    //    event.errors.push({
-                    //        field: this.get('date1'),
-                    //        error: 'Registration date should be prior to submission date'
-                    //    });
-                    //}
+                    var obj_fields_valid = {};
+                    if (_self.objForm && _self.objForm.arr_fields && Array.isArray(_self.objForm.arr_fields)) {
+                        Array.from(_self.objForm.arr_fields).forEach(f_ => {
+                            if (f_.str_name && f_.arr_rules && Array.isArray(f_.arr_rules)) {
+                                obj_fields_valid[f_.str_name] = {
+                                    identifier: f_.str_name,
+                                    rules: f_.arr_rules
+                                };
+                            }
+                        });
+                    }
 
+                    console.log('APP.ready: obj_fields_valid = ', obj_fields_valid);
 
+                    $('.ui.form').form({ fields: obj_fields_valid });
                 }
-            });
+            }
         });
-
-
-            //w2ui.form.on('validate', function (event) {
-            //    console.log(event);
-            //});
     </script>
-
 </body>
 </html>
