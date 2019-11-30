@@ -19,38 +19,8 @@
     <script src="_libs/datatables/jquery.dataTables.min.js"></script>
     <script src="_libs/datatables/dataTables.fixedColumns.min.js"></script>
 
-    <style type="text/css">
-        body {
-            background-color: #f5f5f5;
-        }
-
-        /**************************************/
-        /* APP */
-
-        #ui-app {
-            height: 100vh;
-        }
-
-            #ui-app .ui-page {
-                max-width: 450px;
-                background-color: #fff;
-            }
-            
-        /**************************************/
-        /* FOMANTIC-UI */
-
-        .field {
-            text-align: left;
-        }
-
-        .ui.stacked.segment:after, 
-        .ui.stacked.segment:before, 
-        .ui.stacked.segments:after, 
-        .ui.stacked.segments:before {
-            bottom: -6px
-        }
-
-    </style>
+    <script src="_libs/init.js"></script>
+    <link href="_libs/init.css" rel="stylesheet" />
 </head>
 <body>
     <div id="ui-app" class="ui middle aligned center aligned grid">
@@ -59,15 +29,40 @@
                 <div class="ui error message"></div>
                 <div class="ui stacked segment">
                     <div v-for="(field,index) in objForm.arr_fields"
-                         v-if="field.str_kit === 'text'" :class="['field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
+                         v-if="field.str_kit === 'text'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
                         <label>{{field.str_caption}}</label>
-                        <input type="text" :name="field.str_name" :placeholder="field.str_placeholder">
+                        <div :class="['ui input', field.bit_focus ? 'focus' : '', (field.str_label && field.str_label.length > 0) ? 'labeled' : '', field.str_icon_align ? '' : field.str_icon_align, (field.bit_loading || (field.str_icon && field.str_icon.length > 0)) ? 'icon' : '', field.bit_loading ? 'purple double loading' : '']">
+                            <div v-show="field.str_label && field.str_label.length > 0" class="ui label">{{field.str_label}}</div>
+                            <input type="text" :name="field.str_id" :placeholder="field.str_placeholder">
+                            <i v-show="field.str_icon && field.str_icon.length > 0" :class="['icon', field.str_icon]"></i>
+                        </div>
                     </div>
-                    <div v-else-if="field.str_kit === 'checkbox'" :class="['field ___v-form-field-' + field.str_name, field.bit_required ? 'required':'', field.bit_inline ? 'inline' : '']">
+                    <div v-else-if="field.str_kit === 'text-dropdown'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
+                        <label>{{field.str_caption}}</label>
+                        <div :class="['ui input', field.bit_focus ? 'focus' : '', ((field.arr_dropdown && field.arr_dropdown.length > 0)||(field.str_label && field.str_label.length > 0)) ? 'right labeled' : '', field.str_icon_align ? '' : field.str_icon_align, (field.bit_loading || (field.str_icon && field.str_icon.length > 0)) ? 'icon' : '', field.bit_loading ? 'purple double loading' : '']">
+                            <input type="text" :name="field.str_id" :placeholder="field.str_placeholder">
+                            <div v-show="field.arr_dropdown && field.arr_dropdown.length > 0" class="ui dropdown label">
+                                <div class="text">{{field.arr_dropdown[0].text}}</div>
+                                <i class="dropdown icon"></i>
+                                <div class="menu">
+                                    <div class="item" v-for="(it2,i2) in field.arr_dropdown">{{it2.text}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else-if="field.str_kit === 'checkbox'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required':'', field.bit_inline ? 'inline' : '']">
                         <div class="ui checkbox">
-                            <input type="checkbox" :name="field.str_name" tabindex="0" class="hidden">
+                            <input type="checkbox" :name="field.str_id" tabindex="0" class="hidden">
                             <label>{{field.str_caption}}</label>
                         </div>
+                    </div>
+                    <div v-else-if="field.str_kit === 'dropdown'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required':'', field.bit_inline ? 'inline' : '']">
+                        <label>{{field.str_caption}}</label>
+                        <select class="ui dropdown" name="dropdown">
+                            <option value="">{{field.str_placeholder}}</option>
+                            <option value="male">Choice 1</option>
+                            <option value="female">Choice 2</option>
+                        </select>
                     </div>
                     <div v-else class="required inline field">
                         Not A/B/C
@@ -77,71 +72,7 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-        new Vue({
-            el: '#ui-app',
-            data: function () {
-                return {
-                    objForm: {
-                        str_title: '',
-                        arr_fields: [
-                            {
-                                str_name: 'field-1',
-                                str_caption: 'Last name',
-                                str_placeholder: 'Full name',
-                                str_kit: 'text',
-                                bit_required: true,
-                                bit_inline: false,
-                                arr_rules: [
-                                    {
-                                        type: 'empty',
-                                        prompt: 'Please enter your name'
-                                    }
-                                ]
-                            },
-                            {
-                                str_name: 'field-2',
-                                str_caption: 'I agree to the terms and conditions',
-                                str_kit: 'checkbox',
-                                bit_required: false,
-                                bit_inline: true
-                            }
-                        ]
-                    }
-                };
-            },
-            created: function () {
-                var _self = this;
-                console.log('APP.created: ');
-            },
-            mounted: function () {
-                var _self = this;
-                console.log('APP.mounted: ');
-                Vue.nextTick(_self.___ready);
-            },
-            methods: {
-                ___ready: function () {
-                    var _self = this;
-                    console.log('APP.ready: data = ', _self.objForm.arr_fields);
 
-                    var obj_fields_valid = {};
-                    if (_self.objForm && _self.objForm.arr_fields && Array.isArray(_self.objForm.arr_fields)) {
-                        Array.from(_self.objForm.arr_fields).forEach(f_ => {
-                            if (f_.str_name && f_.arr_rules && Array.isArray(f_.arr_rules)) {
-                                obj_fields_valid[f_.str_name] = {
-                                    identifier: f_.str_name,
-                                    rules: f_.arr_rules
-                                };
-                            }
-                        });
-                    }
-
-                    console.log('APP.ready: obj_fields_valid = ', obj_fields_valid);
-
-                    $('.ui.form').form({ fields: obj_fields_valid });
-                }
-            }
-        });
-    </script>
+    <script src="_libs/app.js"></script>
 </body>
 </html>
