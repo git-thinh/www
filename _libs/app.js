@@ -8,18 +8,126 @@ new Vue({
                 str_title: '',
                 arr_fields: [
                     {
+                        str_kit: 'test',
+                        str_id: ___guid(),
+                        str_html:'<div class="ui input"><input type="text" name="{str_id}" placeholder="{str_placeholder}"></div>'
+                    },
+                    {
                         str_kit: 'text',
                         str_id: ___guid(),
                         str_name: '',
-                        str_caption: 'Last name',
+                        str_caption: 'Text',
+                        str_placeholder: 'Full name', 
+                        bit_focus: false,
+                        bit_loading: false,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text icon',
                         str_placeholder: 'Full name',
-                        //str_label: 'https://',
-                        str_label: '',
-                        str_icon: '',
-                        //str_icon: 'search',
-                        //str_icon: 'circular search link',
-                        //str_icon: 'inverted circular search link',
-                        str_icon_align: 'right', // left|right
+                        str_icon: 'search',
+                        bit_focus: false,
+                        bit_loading: false,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text icon left',
+                        str_placeholder: 'Full name',
+                        str_icon: 'users',
+                        str_icon_align: 'left',
+                        bit_focus: false,
+                        bit_loading: false,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text icon left',
+                        str_placeholder: 'Full name',
+                        str_icon: 'users',
+                        str_icon_align: 'left',
+                        bit_focus: false,
+                        bit_loading: true,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text loading',
+                        str_placeholder: 'Full name',
+                        bit_focus: false,
+                        bit_loading: true,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text-button',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text button',
+                        str_placeholder: 'Full name',
+                        str_button_icon: 'search',
+                        bit_focus: false,
+                        bit_loading: false,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text-label',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text label',
+                        str_placeholder: 'Full name',
+                        str_label: 'https://',
+                        str_label_align: 'right', // left|right
                         bit_focus: false,
                         bit_loading: false,
                         bit_required: true,
@@ -35,16 +143,28 @@ new Vue({
                         str_kit: 'text-dropdown',
                         str_id: ___guid(),
                         str_name: '',
-                        str_caption: 'Last name',
+                        str_caption: 'Text dropdown',
                         str_placeholder: 'Full name',
-                        //str_label: 'https://',
-                        str_label: '',
-                        str_icon: '',
-                        //str_icon: 'search',
-                        //str_icon: 'circular search link',
-                        //str_icon: 'inverted circular search link',
-                        str_icon_align: 'right', // left|right
                         arr_dropdown: [{ id: 1, text: 'text-1' }, { id: 2, text: 'text-2' }],
+                        bit_focus: false,
+                        bit_loading: false,
+                        bit_required: true,
+                        bit_inline: false,
+                        arr_rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter your name'
+                            }
+                        ]
+                    },
+                    {
+                        str_kit: 'text-dropdown-button',
+                        str_id: ___guid(),
+                        str_name: '',
+                        str_caption: 'Text dropdown button',
+                        str_placeholder: 'Full name',
+                        arr_dropdown: [{ id: 1, text: 'text-1' }, { id: 2, text: 'text-2' }],
+                        str_button_icon: 'search',
                         bit_focus: false,
                         bit_loading: false,
                         bit_required: true,
@@ -102,8 +222,11 @@ new Vue({
                 Array.from(_self.objForm.arr_fields).forEach(f_ => {
                     switch (f_.str_kit) {
                         case 'text':
+                        case 'text-icon':
+                        case 'text-label':
                             break;
                         case 'text-dropdown':
+                        case 'text-dropdown-button':
                             if (f_.arr_dropdown && f_.arr_dropdown.length > 0) {
                                 $('#' + f_.str_id + ' .ui.dropdown').dropdown();
                             }

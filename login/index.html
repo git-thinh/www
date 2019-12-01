@@ -8,6 +8,7 @@
     <title></title>
 
     <script src="_libs/jquery.js"></script>
+    <script src="_libs/lodash.min.js"></script>
 
     <link href="_libs/fomantic-ui/semantic.min.css" rel="stylesheet" />
     <script src="_libs/fomantic-ui/semantic.min.js"></script>
@@ -31,6 +32,23 @@
                     <div v-for="(field,index) in objForm.arr_fields"
                          v-if="field.str_kit === 'text'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
                         <label>{{field.str_caption}}</label>
+                        <div :class="['ui input', field.bit_focus ? 'focus' : '', field.bit_loading ? 'icon right purple double loading' : '', field.str_icon_align, field.str_icon && field.str_icon.length > 0 ? 'icon' : '']">
+                            <input type="text" :name="field.str_id" :placeholder="field.str_placeholder">
+                            <i v-show="field.bit_loading || (field.str_icon && field.str_icon.length > 0)" :class="['icon', field.str_icon]"></i>
+                        </div>
+                    </div>
+                    <div v-else-if="field.str_kit === 'test'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']" v-html="___field_build(field)"></div>
+                    <div v-else-if="field.str_kit === 'text-button'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
+                        <label>{{field.str_caption}}</label>
+                        <div :class="['ui action input', field.bit_focus ? 'focus' : '', field.bit_loading ? 'icon right purple double loading' : '', field.str_icon_align, field.str_icon && field.str_icon.length > 0 ? 'icon' : '']">
+                            <input type="text" :name="field.str_id" :placeholder="field.str_placeholder">
+                            <div v-show="field.str_button_icon || (field.str_button_icon && field.str_button_icon.length > 0)" class="ui icon button">
+                                <i :class="[field.str_button_icon,'icon']"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else-if="field.str_kit === 'text-label'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
+                        <label>{{field.str_caption}}</label>
                         <div :class="['ui input', field.bit_focus ? 'focus' : '', (field.str_label && field.str_label.length > 0) ? 'labeled' : '', field.str_icon_align ? '' : field.str_icon_align, (field.bit_loading || (field.str_icon && field.str_icon.length > 0)) ? 'icon' : '', field.bit_loading ? 'purple double loading' : '']">
                             <div v-show="field.str_label && field.str_label.length > 0" class="ui label">{{field.str_label}}</div>
                             <input type="text" :name="field.str_id" :placeholder="field.str_placeholder">
@@ -47,6 +65,18 @@
                                 <div class="menu">
                                     <div class="item" v-for="(it2,i2) in field.arr_dropdown">{{it2.text}}</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else-if="field.str_kit === 'text-dropdown-button'" :id="field.str_id" :class="[field.str_id, 'field ___v-form-field-' + field.str_name, field.bit_required ? 'required' : '', field.bit_inline ? 'inline' : '']">
+                        <label>{{field.str_caption}}</label>
+                        <div :class="['ui action input', field.bit_focus ? 'focus' : '', field.str_icon_align ? '' : field.str_icon_align, (field.bit_loading || (field.str_icon && field.str_icon.length > 0)) ? 'icon' : '', field.bit_loading ? 'purple double loading' : '']">
+                            <input type="text" :name="field.str_id" :placeholder="field.str_placeholder">
+                            <select v-show="field.arr_dropdown && field.arr_dropdown.length > 0" class="ui compact selection dropdown">
+                                <option v-for="(it2,i2) in field.arr_dropdown" :value="it2.id">{{it2.text}}</option>
+                            </select>
+                            <div v-show="field.str_button_icon || (field.str_button_icon && field.str_button_icon.length > 0)" class="ui icon button">
+                                <i :class="[field.str_button_icon,'icon']"></i>
                             </div>
                         </div>
                     </div>
